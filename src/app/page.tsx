@@ -160,6 +160,31 @@ export default function Home() {
     }
   };
 
+  const runCleanup = async () => {
+    try {
+      setMessage("");
+      const res = await fetch("/api/cleanup", {
+        method: "POST",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(data.error || "Failed to run expiry cleanup");
+        setMessageType("error");
+        return;
+      }
+
+      setMessage(`✅ ${data.message || "Expired reservations cleaned up successfully"}`);
+      setMessageType("success");
+      await Promise.all([fetchProducts(), fetchReservations()]);
+    } catch (error) {
+      console.error("Error:", error);
+      setMessage("Error running expiry cleanup");
+      setMessageType("error");
+    }
+  };
+
   const clearDatabase = async () => {
     const confirmed = window.confirm(
       "This will cancel all pending reservations and restore inventory availability. Continue?"
@@ -224,8 +249,11 @@ export default function Home() {
           </div>
 
           <div className="flex flex-wrap gap-3 justify-start lg:justify-end">
+            <Button variant="outline" onClick={runCleanup} className="whitespace-nowrap">
+              Trigger Expiry Cleanup
+            </Button>
             <Button variant="outline" onClick={clearDatabase} className="whitespace-nowrap">
-              Cancel All Reservations
+              Cancel All Pending
             </Button>
           </div>
         </div>
