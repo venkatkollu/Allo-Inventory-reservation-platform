@@ -35,18 +35,11 @@ export async function POST() {
         }
       }
 
-      const updated = await tx.reservation.updateMany({
-        where: {
-          status: "PENDING",
-        },
-        data: {
-          status: "RELEASED",
-        },
-      });
+      const deleted = await tx.reservation.deleteMany({});
 
       return {
-        message: `Cancelled ${updated.count} pending reservation(s)`,
-        cancelledCount: updated.count,
+        message: `Cleared all reservations and restored inventory holds.`,
+        cancelledCount: deleted.count,
       };
     });
 

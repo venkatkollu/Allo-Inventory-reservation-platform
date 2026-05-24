@@ -187,7 +187,7 @@ export default function Home() {
 
   const clearDatabase = async () => {
     const confirmed = window.confirm(
-      "This will cancel all pending reservations and restore inventory availability. Continue?"
+      "This will delete all reservations (both pending and completed) and restore active inventory locks. Continue?"
     );
 
     if (!confirmed) {
@@ -253,7 +253,7 @@ export default function Home() {
               Trigger Expiry Cleanup
             </Button>
             <Button variant="outline" onClick={clearDatabase} className="whitespace-nowrap">
-              Cancel All Pending
+              Clear All Reservations
             </Button>
           </div>
         </div>
