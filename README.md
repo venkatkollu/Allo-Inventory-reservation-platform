@@ -2,6 +2,14 @@
 
 A production-grade inventory management system demonstrating transactional database operations, reservation lifecycle management, and concurrency-safe stock handling. Built with Next.js 16, Prisma ORM, and PostgreSQL to showcase backend engineering best practices.
 
+## 🌐 Live Demo & Deployment
+
+- **Live URL**: [Add your deployment URL here]
+- **GitHub Repo**: [This repository](https://github.com/venkatkollu/Inventory-reservation-platform)
+- **Deployment Guide**: See [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+---
+
 ## 📋 Table of Contents
 
 - [Overview](#overview)
@@ -647,24 +655,27 @@ alert.if(pendingCount > 10000, 'High pending reservations');
 alert.if(reservationSuccessRate < 0.95, 'High failure rate');
 ```
 
-### Deployment to Vercel + Neon
+### Deployment to Vercel + Neon / Railway / Render
 
+**👉 See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete step-by-step guide with:**
+- ✅ Vercel + Vercel Postgres (recommended, 5 min)
+- ✅ Railway (simple alternative)
+- ✅ Render (another option)
+- ✅ Database seeding instructions
+- ✅ Post-deployment testing
+
+**Quick deployment summary:**
 ```bash
-# 1. Push code to GitHub
+# Push to GitHub
 git push origin main
 
-# 2. Connect to Vercel
-npm i -g vercel
-vercel
+# Deploy with one of these:
+# 1. Vercel: vercel deploy --prod
+# 2. Railway: railway up
+# 3. Render: Connect GitHub repo in dashboard
 
-# 3. Add environment variable
-vercel env add DATABASE_URL  # paste Neon connection string
-
-# 4. Deploy
-vercel deploy --prod
-
-# 5. Verify deployment
-curl https://your-domain.vercel.app/api/products
+# Seed database with demo data
+npx prisma db seed
 ```
 
 ---
