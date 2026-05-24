@@ -34,6 +34,13 @@ export async function POST(
       );
     }
 
+    if (reservation.status === "EXPIRED") {
+      return NextResponse.json(
+        { error: "Cannot release expired reservations (already cleaned up)" },
+        { status: 400 }
+      );
+    }
+
     // Perform transactional release
     const result = await prisma.$transaction(async (tx) => {
       const inventory = await tx.inventory.findUnique({
@@ -49,18 +56,15 @@ export async function POST(
         throw new Error("Inventory not found");
       }
 
-      if (inventory.reservedQuantity < reservation.quantity) {
-        throw new Error("Invalid reserved quantity for release");
-      }
+      // Safely calculate new reserved quantity (handles race conditions)
+      const newReserved = Math.max(0, inventory.reservedQuantity - reservation.quantity);
 
       await tx.inventory.update({
         where: {
           id: inventory.id,
         },
         data: {
-          reservedQuantity: {
-            decrement: reservation.quantity,
-          },
+          reservedQuantity: newReserved,
         },
       });
 
