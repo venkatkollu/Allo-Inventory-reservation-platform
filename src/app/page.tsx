@@ -31,6 +31,44 @@ interface Reservation {
   createdAt: string;
 }
 
+function CountdownTimer({
+  expiresAt,
+  onExpire,
+}: {
+  expiresAt: string;
+  onExpire: () => void;
+}) {
+  const [timeLeft, setTimeLeft] = useState("");
+  const [isExpired, setIsExpired] = useState(false);
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const difference = +new Date(expiresAt) - +new Date();
+      if (difference <= 0) {
+        setTimeLeft("Expired");
+        setIsExpired(true);
+        onExpire();
+        return;
+      }
+
+      const minutes = Math.floor((difference / 1000 / 60) % 60);
+      const seconds = Math.floor((difference / 1000) % 60);
+      setTimeLeft(`Expires in: ${minutes}m ${seconds}s`);
+    };
+
+    calculateTimeLeft();
+    const interval = setInterval(calculateTimeLeft, 1000);
+
+    return () => clearInterval(interval);
+  }, [expiresAt, onExpire]);
+
+  return (
+    <p className={`text-xs font-semibold ${isExpired ? "text-red-500" : "text-amber-600 animate-pulse"}`}>
+      {timeLeft}
+    </p>
+  );
+}
+
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -446,9 +484,13 @@ export default function Home() {
                               </div>
 
                               {reservation.status === "PENDING" && (
-                                <p className="text-xs text-slate-500 dark:text-slate-400">
-                                  Expires: {new Date(reservation.expiresAt).toLocaleTimeString()}
-                                </p>
+                                <CountdownTimer
+                                  expiresAt={reservation.expiresAt}
+                                  onExpire={() => {
+                                    fetchProducts();
+                                    fetchReservations();
+                                  }}
+                                />
                               )}
 
                               {reservation.status === "PENDING" && (

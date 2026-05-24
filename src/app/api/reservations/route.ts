@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import type { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
@@ -35,7 +35,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    const result = await prisma.$transaction(
+      async (tx: Prisma.TransactionClient) => {
       const inventory = await tx.inventory.findUnique({
         where: {
           productId_warehouseId: {
@@ -86,6 +87,8 @@ export async function POST(req: NextRequest) {
       });
 
       return reservation;
+    }, {
+      isolationLevel: Prisma.TransactionIsolationLevel.Serializable
     });
 
     return NextResponse.json(result, { status: 201 });
