@@ -1,6 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Package, Warehouse, Clock, CheckCircle, XCircle } from "lucide-react";
 
 interface Inventory {
   warehouseId: string;
@@ -156,167 +161,257 @@ export default function Home() {
   };
 
   if (loading) {
-    return <div className="min-h-screen p-8">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center">
+        <Card className="w-64">
+          <CardContent className="pt-6 text-center">
+            <div className="animate-spin w-8 h-8 border-4 border-slate-200 border-t-slate-900 rounded-full mx-auto mb-4"></div>
+            <p className="text-slate-600 dark:text-slate-400">Loading inventory...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
-    <main className="min-h-screen p-8 bg-gray-50">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-2">Inventory Reservation Platform</h1>
-        <p className="text-gray-600 mb-8">
-          Manage temporary stock reservations with real-time inventory tracking
-        </p>
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 py-12 px-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-2">
+            <Package className="w-8 h-8 text-slate-900 dark:text-slate-50" />
+            <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-50">
+              Inventory Manager
+            </h1>
+          </div>
+          <p className="text-lg text-slate-600 dark:text-slate-400">
+            Real-time stock tracking and temporary reservations
+          </p>
+        </div>
 
+        {/* Alert Messages */}
         {message && (
-          <div
-            className={`mb-6 p-4 rounded-lg ${
-              messageType === "success"
-                ? "bg-green-50 text-green-700 border border-green-200"
-                : "bg-red-50 text-red-700 border border-red-200"
-            }`}
-          >
-            {message}
+          <div className={`mb-6 rounded-lg border p-4 animate-in fade-in ${
+            messageType === "success"
+              ? "bg-emerald-50 text-emerald-900 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-50 dark:border-emerald-800"
+              : "bg-red-50 text-red-900 border-red-200 dark:bg-red-950 dark:text-red-50 dark:border-red-800"
+          }`}>
+            <div className="flex items-center gap-3">
+              {messageType === "success" ? (
+                <CheckCircle className="w-5 h-5 flex-shrink-0" />
+              ) : (
+                <XCircle className="w-5 h-5 flex-shrink-0" />
+              )}
+              <p className="font-medium">{message}</p>
+            </div>
           </div>
         )}
 
-        <div className="space-y-8">
-          <section className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-2xl font-bold mb-6">📦 Inventory Status</h2>
-
-            <div className="space-y-6">
-              {products.map((product) => (
-                <div key={product.id} className="border rounded-lg p-5">
-                  <h3 className="text-lg font-semibold mb-4">{product.name}</h3>
-
-                  <div className="space-y-3 mb-4">
-                    {product.inventories.map((inventory) => (
-                      <div
-                        key={inventory.warehouseId}
-                        className="flex justify-between items-center bg-gray-50 p-3 rounded"
-                      >
-                        <div>
-                          <p className="font-medium">{inventory.warehouseName}</p>
-                          <p className="text-sm text-gray-600">
-                            {inventory.availableQuantity} available /
-                            {inventory.totalQuantity} total
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-lg font-bold text-blue-600">
-                            {inventory.availableQuantity}
-                          </p>
-                          {inventory.reservedQuantity > 0 && (
-                            <p className="text-sm text-orange-600">
-                              {inventory.reservedQuantity} reserved
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="border-t pt-4 space-y-2">
-                    {product.inventories.map((inventory) => (
-                      <div key={inventory.warehouseId} className="flex gap-2">
-                        <input
-                          type="number"
-                          min="1"
-                          max={inventory.availableQuantity}
-                          placeholder="Qty"
-                          className="flex-1 px-3 py-2 border rounded text-sm"
-                          onChange={(e) =>
-                            setReserveData({
-                              productId: product.id,
-                              warehouseId: inventory.warehouseId,
-                              quantity: parseInt(e.target.value) || 1,
-                            })
-                          }
-                        />
-                        <button
-                          onClick={() =>
-                            createReservation(
-                              product.id,
-                              inventory.warehouseId,
-                              reserveData?.quantity || 1
-                            )
-                          }
-                          disabled={inventory.availableQuantity <= 0}
-                          className="px-4 py-2 bg-blue-600 text-white rounded text-sm font-medium hover:bg-blue-700 disabled:bg-gray-400"
-                        >
-                          Reserve
-                        </button>
-                      </div>
-                    ))}
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Inventory Section */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Warehouse className="w-5 h-5" />
+                  <div>
+                    <CardTitle>Available Products</CardTitle>
+                    <CardDescription>Create reservations for inventory items</CardDescription>
                   </div>
                 </div>
-              ))}
-            </div>
-          </section>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {products.length === 0 ? (
+                    <p className="text-center py-8 text-slate-500">No products available</p>
+                  ) : (
+                    products.map((product) => (
+                      <Card key={product.id} className="border-slate-200">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-xl">{product.name}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-4">
+                            {product.inventories.map((inventory) => (
+                              <div
+                                key={inventory.warehouseId}
+                                className="border border-slate-200 dark:border-slate-800 rounded-lg p-4 space-y-4"
+                              >
+                                {/* Warehouse Header */}
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <Warehouse className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                                    <span className="font-semibold">{inventory.warehouseName}</span>
+                                  </div>
+                                  {inventory.availableQuantity > 0 ? (
+                                    <Badge variant="secondary" className="bg-emerald-100 text-emerald-900 border-emerald-300 dark:bg-emerald-950 dark:text-emerald-50">
+                                      {inventory.availableQuantity} Available
+                                    </Badge>
+                                  ) : (
+                                    <Badge variant="destructive">Out of Stock</Badge>
+                                  )}
+                                </div>
 
-          {reservations.length > 0 && (
-            <section className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-2xl font-bold mb-6">🎟️ My Reservations</h2>
+                                {/* Stock Info */}
+                                <div className="grid grid-cols-3 gap-4 text-sm">
+                                  <div className="bg-slate-50 dark:bg-slate-900 p-3 rounded">
+                                    <p className="text-slate-600 dark:text-slate-400 text-xs">Available</p>
+                                    <p className="text-xl font-bold text-slate-900 dark:text-slate-50">{inventory.availableQuantity}</p>
+                                  </div>
+                                  <div className="bg-slate-50 dark:bg-slate-900 p-3 rounded">
+                                    <p className="text-slate-600 dark:text-slate-400 text-xs">Reserved</p>
+                                    <p className="text-xl font-bold text-orange-600">{inventory.reservedQuantity}</p>
+                                  </div>
+                                  <div className="bg-slate-50 dark:bg-slate-900 p-3 rounded">
+                                    <p className="text-slate-600 dark:text-slate-400 text-xs">Total</p>
+                                    <p className="text-xl font-bold text-slate-900 dark:text-slate-50">{inventory.totalQuantity}</p>
+                                  </div>
+                                </div>
 
-              <div className="space-y-3">
-                {reservations.map((reservation) => {
-                  const product = products.find(
-                    (p) => p.id === reservation.productId
-                  );
-                  const inventory = product?.inventories.find(
-                    (i) => i.warehouseId === reservation.warehouseId
-                  );
+                                {/* Reserve Action */}
+                                {inventory.availableQuantity > 0 && (
+                                  <div className="flex gap-2 pt-2">
+                                    <Input
+                                      type="number"
+                                      min="1"
+                                      max={inventory.availableQuantity}
+                                      placeholder="Quantity"
+                                      defaultValue="1"
+                                      className="flex-1"
+                                      onChange={(e) =>
+                                        setReserveData({
+                                          productId: product.id,
+                                          warehouseId: inventory.warehouseId,
+                                          quantity: parseInt(e.target.value) || 1,
+                                        })
+                                      }
+                                    />
+                                    <Button
+                                      onClick={() =>
+                                        createReservation(
+                                          product.id,
+                                          inventory.warehouseId,
+                                          reserveData?.quantity || 1
+                                        )
+                                      }
+                                      className="px-6"
+                                    >
+                                      Reserve
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-                  return (
-                    <div
-                      key={reservation.id}
-                      className="border rounded-lg p-4 flex justify-between items-center"
-                    >
-                      <div>
-                        <p className="font-semibold">
-                          {product?.name} - {inventory?.warehouseName}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          Qty: {reservation.quantity} | Status:{" "}
-                          <span
-                            className={`font-medium ${
-                              reservation.status === "PENDING"
-                                ? "text-orange-600"
-                                : reservation.status === "CONFIRMED"
-                                  ? "text-green-600"
-                                  : "text-gray-600"
-                            }`}
-                          >
-                            {reservation.status}
-                          </span>
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Expires: {new Date(reservation.expiresAt).toLocaleTimeString()}
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        {reservation.status === "PENDING" && (
-                          <>
-                            <button
-                              onClick={() => confirmReservation(reservation.id)}
-                              className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700"
-                            >
-                              Confirm
-                            </button>
-                            <button
-                              onClick={() => releaseReservation(reservation.id)}
-                              className="px-3 py-1 bg-red-600 text-white rounded text-sm hover:bg-red-700"
-                            >
-                              Cancel
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-          )}
+          {/* Reservations Sidebar */}
+          <div>
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-5 h-5" />
+                  <div>
+                    <CardTitle>Active Reservations</CardTitle>
+                    <CardDescription>{reservations.length} total</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {reservations.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-slate-500 dark:text-slate-400 text-sm">
+                      No active reservations yet
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {reservations.map((reservation) => {
+                      const product = products.find((p) => p.id === reservation.productId);
+                      const inventory = product?.inventories.find(
+                        (i) => i.warehouseId === reservation.warehouseId
+                      );
+
+                      const statusColors: Record<string, string> = {
+                        PENDING: "bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-950 dark:text-amber-50",
+                        CONFIRMED: "bg-emerald-100 text-emerald-900 border-emerald-300 dark:bg-emerald-950 dark:text-emerald-50",
+                        RELEASED: "bg-slate-100 text-slate-900 border-slate-300 dark:bg-slate-800 dark:text-slate-50",
+                        EXPIRED: "bg-red-100 text-red-900 border-red-300 dark:bg-red-950 dark:text-red-50",
+                      };
+
+                      return (
+                        <Card key={reservation.id} className="border-slate-200 bg-slate-50 dark:bg-slate-900 dark:border-slate-800">
+                          <CardContent className="pt-4">
+                            <div className="space-y-2 text-sm">
+                              <div>
+                                <p className="font-semibold text-slate-900 dark:text-slate-50">
+                                  {product?.name}
+                                </p>
+                                <p className="text-xs text-slate-600 dark:text-slate-400">
+                                  {inventory?.warehouseName}
+                                </p>
+                              </div>
+
+                              <div className="flex items-center justify-between">
+                                <span className="text-slate-600 dark:text-slate-400">Qty:</span>
+                                <span className="font-bold text-slate-900 dark:text-slate-50">
+                                  {reservation.quantity}
+                                </span>
+                              </div>
+
+                              <div>
+                                <Badge
+                                  variant="outline"
+                                  className={statusColors[reservation.status] || statusColors.PENDING}
+                                >
+                                  {reservation.status}
+                                </Badge>
+                              </div>
+
+                              {reservation.status === "PENDING" && (
+                                <p className="text-xs text-slate-500 dark:text-slate-400">
+                                  Expires: {new Date(reservation.expiresAt).toLocaleTimeString()}
+                                </p>
+                              )}
+
+                              {reservation.status === "PENDING" && (
+                                <div className="flex gap-2 pt-2">
+                                  <Button
+                                    size="sm"
+                                    variant="secondary"
+                                    onClick={() => confirmReservation(reservation.id)}
+                                    className="flex-1"
+                                  >
+                                    Confirm
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => releaseReservation(reservation.id)}
+                                    className="flex-1"
+                                  >
+                                    Release
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </main>
