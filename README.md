@@ -2,6 +2,8 @@
 
 A real-time inventory management system demonstrating transactional database operations, reservation lifecycle management, and concurrency-safe stock handling.
 
+**🔗 Live Link**: [https://inventory-reservation-platform.vercel.app/](https://inventory-reservation-platform.vercel.app/)
+
 ## 🛠️ Tech Stack
 
 - **Frontend**: Next.js 16 (React 19) + Tailwind CSS + shadcn/ui
