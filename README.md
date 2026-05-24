@@ -4,9 +4,23 @@ A production-grade inventory management system demonstrating transactional datab
 
 ## 🌐 Live Demo & Deployment
 
-- **Live URL**: [Add your deployment URL here]
+- **Live URL**: [Add your Vercel deployment URL here after step 4 below]
 - **GitHub Repo**: [This repository](https://github.com/venkatkollu/Inventory-reservation-platform)
-- **Deployment Guide**: See [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+### Quick Deploy to Vercel (5 minutes)
+
+1. Go to [vercel.com](https://vercel.com) → Sign in with GitHub
+2. Click "New Project" → Select this repository
+3. Vercel auto-detects Next.js configuration
+4. Click "Deploy" 
+5. After deployment completes, copy your live URL
+6. Run database seed:
+   ```bash
+   vercel env pull
+   npx prisma migrate deploy
+   npx prisma db seed
+   ```
+7. Update the **Live URL** above with your deployed app URL
 
 ---
 
@@ -655,27 +669,27 @@ alert.if(pendingCount > 10000, 'High pending reservations');
 alert.if(reservationSuccessRate < 0.95, 'High failure rate');
 ```
 
-### Deployment to Vercel + Neon / Railway / Render
+### Deployment to Vercel
 
-**👉 See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete step-by-step guide with:**
-- ✅ Vercel + Vercel Postgres (recommended, 5 min)
-- ✅ Railway (simple alternative)
-- ✅ Render (another option)
-- ✅ Database seeding instructions
-- ✅ Post-deployment testing
+**Steps:**
+1. Push code to GitHub (already done ✓)
+2. Go to [vercel.com](https://vercel.com) → New Project
+3. Select this GitHub repository
+4. Vercel auto-configures Next.js → Click Deploy
+5. Add PostgreSQL database:
+   - In Vercel dashboard → Settings → Storage
+   - Click "Create Database" → PostgreSQL
+   - Database is auto-connected via `DATABASE_URL`
+6. Seed database:
+   ```bash
+   vercel env pull
+   npx prisma db seed
+   ```
+7. Your app is live! Open the Vercel URL
 
-**Quick deployment summary:**
+**Verification:**
 ```bash
-# Push to GitHub
-git push origin main
-
-# Deploy with one of these:
-# 1. Vercel: vercel deploy --prod
-# 2. Railway: railway up
-# 3. Render: Connect GitHub repo in dashboard
-
-# Seed database with demo data
-npx prisma db seed
+curl https://your-vercel-app.vercel.app/api/products
 ```
 
 ---
