@@ -21,34 +21,65 @@ async function main() {
     },
   });
 
-  const iphone = await prisma.product.create({
-    data: {
-      name: "iPhone 15",
-    },
-  });
-
-  const macbook = await prisma.product.create({
-    data: {
-      name: "MacBook Air",
-    },
-  });
+  const [iphone, macbook, pixel, airpods, chair] = await Promise.all([
+    prisma.product.create({ data: { name: "iPhone 15" } }),
+    prisma.product.create({ data: { name: "MacBook Air" } }),
+    prisma.product.create({ data: { name: "Google Pixel 8" } }),
+    prisma.product.create({ data: { name: "AirPods Pro" } }),
+    prisma.product.create({ data: { name: "Ergonomic Office Chair" } }),
+  ]);
 
   await prisma.inventory.createMany({
     data: [
       {
         productId: iphone.id,
         warehouseId: warehouse1.id,
-        totalQuantity: 3,
+        totalQuantity: 5,
       },
       {
         productId: iphone.id,
         warehouseId: warehouse2.id,
-        totalQuantity: 2,
+        totalQuantity: 3,
       },
       {
         productId: macbook.id,
         warehouseId: warehouse1.id,
+        totalQuantity: 2,
+      },
+      {
+        productId: macbook.id,
+        warehouseId: warehouse2.id,
         totalQuantity: 1,
+      },
+      {
+        productId: pixel.id,
+        warehouseId: warehouse1.id,
+        totalQuantity: 4,
+      },
+      {
+        productId: pixel.id,
+        warehouseId: warehouse2.id,
+        totalQuantity: 2,
+      },
+      {
+        productId: airpods.id,
+        warehouseId: warehouse1.id,
+        totalQuantity: 8,
+      },
+      {
+        productId: airpods.id,
+        warehouseId: warehouse2.id,
+        totalQuantity: 5,
+      },
+      {
+        productId: chair.id,
+        warehouseId: warehouse1.id,
+        totalQuantity: 6,
+      },
+      {
+        productId: chair.id,
+        warehouseId: warehouse2.id,
+        totalQuantity: 4,
       },
     ],
   });

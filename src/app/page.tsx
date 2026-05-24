@@ -160,6 +160,39 @@ export default function Home() {
     }
   };
 
+  const clearDatabase = async () => {
+    const confirmed = window.confirm(
+      "This will cancel all pending reservations and restore inventory availability. Continue?"
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setMessage("");
+      const res = await fetch("/api/clear", {
+        method: "POST",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(data.error || "Failed to clear database");
+        setMessageType("error");
+        return;
+      }
+
+      setMessage("✅ Database cleared successfully");
+      setMessageType("success");
+      await Promise.all([fetchProducts(), fetchReservations()]);
+    } catch (error) {
+      console.error("Error:", error);
+      setMessage("Error clearing database");
+      setMessageType("error");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center">
@@ -177,16 +210,24 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 py-12 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-12">
-          <div className="flex items-center gap-3 mb-2">
-            <Package className="w-8 h-8 text-slate-900 dark:text-slate-50" />
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-50">
-              Inventory Manager
-            </h1>
+        <div className="mb-12 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <Package className="w-8 h-8 text-slate-900 dark:text-slate-50" />
+              <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-50">
+                Inventory Manager
+              </h1>
+            </div>
+            <p className="text-lg text-slate-600 dark:text-slate-400">
+              Real-time stock tracking and temporary reservations
+            </p>
           </div>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
-            Real-time stock tracking and temporary reservations
-          </p>
+
+          <div className="flex flex-wrap gap-3 justify-start lg:justify-end">
+            <Button variant="outline" onClick={clearDatabase} className="whitespace-nowrap">
+              Cancel All Reservations
+            </Button>
+          </div>
         </div>
 
         {/* Alert Messages */}
