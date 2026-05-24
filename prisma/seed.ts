@@ -3,6 +3,12 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
+  // Clear existing data (respecting foreign key constraints)
+  await prisma.reservation.deleteMany({});
+  await prisma.inventory.deleteMany({});
+  await prisma.product.deleteMany({});
+  await prisma.warehouse.deleteMany({});
+
   const warehouse1 = await prisma.warehouse.create({
     data: {
       name: "Mumbai Warehouse",
@@ -47,7 +53,7 @@ async function main() {
     ],
   });
 
-  console.log("Seed data created");
+  console.log("Seed data created successfully");
 }
 
 main()

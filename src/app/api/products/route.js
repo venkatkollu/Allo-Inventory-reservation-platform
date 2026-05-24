@@ -20,8 +20,10 @@ export async function GET() {
       warehouseName: inventory.warehouse.name,
       totalQuantity: inventory.totalQuantity,
       reservedQuantity: inventory.reservedQuantity,
-      availableQuantity:
-        inventory.totalQuantity - inventory.reservedQuantity,
+      availableQuantity: Math.max(
+        0,
+        inventory.totalQuantity - inventory.reservedQuantity
+      ),
     })),
   }));
 
